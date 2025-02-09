@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Boxes, PackageSearch } from "lucide-react";
@@ -7,8 +7,60 @@ import Features from "../components/Features";
 import { StarsCanvas } from "../components/StarBackground";
 import Team from "../components/Team";
 import Logo from "../assets/HeroLogo.webp";
+import { AnimatedTestimonialsDemo } from "./AnimatedTestimonialsDemo";
 
 function Home() {
+  // Set up state for the text that will change every 3 seconds
+  const [textIndex, setTextIndex] = useState(0);
+
+  const texts = [
+    {
+      title: "Your Smart Shipping Partner",
+      subtitle: "Shipping Smart, Reducing Waste.",
+      description:
+        "ShipWise makes shipping smarter by optimizing carton sizes and selecting cost-effective couriers to reduce costs and environmental impact.",
+    },
+    {
+      title: "ShipWise SmartFit: Rotate, Optimize, Ship Efficiently!",
+      subtitle: "The Best Fit, Every Time!",
+      description:
+        "Our algorithm analyzes all possible orientations to find the most space-efficient and secure packing strategy. Less waste, more efficiency—because every inch counts!",
+    },
+    {
+      title: "ShipWise PackPerfect: No Gaps, No Waste!",
+      subtitle: "Smart Packing, Maximum Efficiency! ",
+      description:
+        "Say goodbye to wasted space! ShipWise ensures every box is packed to perfection—fitting products efficiently, cutting costs, and making shipping more sustainable.",
+    },
+    {
+      title: "Turning Invoices into Instant Packaging Plans!",
+      subtitle: "Your Invoice, Our Intelligence",
+      description:
+        "ShipWise AI scans invoices, extracts product details, and matches dimensions from inventory—delivering the smartest, space-saving packaging strategy instantly!",
+    },
+    {
+      title: "ShipWise EV Routing: Smarter Routes, Greener Miles!",
+      subtitle: "Charge Smart, Drive Far",
+      description:
+        "ShipWise maps the shortest, most efficient EV routes while strategically placing charging stops—eliminating range anxiety and maximizing delivery efficiency!",
+    },
+    // {
+    //   title: "ShipWise SmartScan: Click, Pack, Ship!",
+    //   subtitle: "Snap the Product, Let ShipWise Handle the Rest!",
+    //   description:
+    //     "Just capture an image—ShipWise predicts dimensions and delivers the best packing strategy, ensuring zero space waste and maximum efficiency!",
+    // },
+    // Add more text objects as needed
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTextIndex((prev) => (prev + 1) % texts.length); // Loop through texts every 3 seconds
+    }, 3000); // 3000ms = 3 seconds
+
+    return () => clearInterval(interval); // Cleanup the interval on component unmount
+  }, []);
+
   return (
     <main className="h-full w-full">
       <div className="flex flex-col gap-20">
@@ -43,36 +95,46 @@ function Home() {
                   </span>
                 </motion.div>
 
+                {/* Title */}
                 <motion.h1
                   className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4"
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ type: "spring", stiffness: 100, damping: 25 }}
                 >
-                  Your{" "}
-                  <span className="bg-gradient-to-r from-indigo-700 to-teal-500 text-transparent bg-clip-text">
-                    Smart Shipping Partner
-                  </span>
+                  {texts[textIndex].title.split(" ").map((word, index) => (
+                    <motion.span
+                      key={index}
+                      initial={{ filter: "blur(10px)", opacity: 0 }}
+                      animate={{ filter: "blur(0px)", opacity: 1 }}
+                      transition={{
+                        duration: 0.3,
+                      }}
+                      className="inline-block"
+                    >
+                      {word}&nbsp;
+                    </motion.span>
+                  ))}
                 </motion.h1>
 
+                {/* Subtitle */}
                 <motion.p
                   className="text-xl sm:text-2xl mb-4 text-indigo-100 font-light"
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ type: "spring", stiffness: 100, damping: 25 }}
                 >
-                  Shipping Smart, Reducing Waste.
+                  {texts[textIndex].subtitle}
                 </motion.p>
 
+                {/* Description */}
                 <motion.p
                   className="text-base sm:text-lg font-light mb-8 text-gray-300 max-w-lg sm:max-w-xl mx-auto md:mx-0"
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ type: "spring", stiffness: 100, damping: 25 }}
                 >
-                  ShipWise makes shipping smarter by optimizing carton sizes and
-                  selecting cost-effective couriers to reduce costs and
-                  environmental impact.
+                  {texts[textIndex].description}
                 </motion.p>
 
                 {/* Action Links */}
@@ -96,15 +158,7 @@ function Home() {
 
               {/* Right Image */}
               <div className="relative z-10 md:ml-10 mt-8 lg:mt-0">
-                <motion.img
-                  src={Logo}
-                  alt="Smart Shipping Partner Logo"
-                  className="w-[300px] sm:w-[300px] md:w-[500px] lg:w-[550px] h-auto mx-auto"
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ type: "spring", stiffness: 100, damping: 25 }}
-                  loading="lazy"
-                />
+                <AnimatedTestimonialsDemo />
               </div>
             </motion.section>
           </div>

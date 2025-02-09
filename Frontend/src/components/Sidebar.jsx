@@ -18,6 +18,7 @@ const Sidebar = () => {
     { id: "pickbox", label: "Pick Box", path: "/dashboard/pickbox" },
     { id: "optimalcalculation", label: "Optimal Calculation", path: "/dashboard/optimalcalculation" },
     { id: "bufferingcalculation", label: "Buffering Calculation", path: "/dashboard/bufferingcalculation" },
+    { id: "integratedmap", label: "Map", path: "/dashboard/integratedmap" },
   ];
 
   return (

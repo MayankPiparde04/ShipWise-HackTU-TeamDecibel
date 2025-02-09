@@ -31,7 +31,7 @@ const Dashboard = () => {
       return <OptimalCalculation />;
     } else if (id === "bufferingcalculation") {
       return <BufferingCalculation />;
-    } else {
+    }  else {
       return <Statistics />;
     }
   };
