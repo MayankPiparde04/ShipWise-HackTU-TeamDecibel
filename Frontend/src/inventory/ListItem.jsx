@@ -71,7 +71,7 @@ const ListItem = () => {
                     <td className="px-4 py-3">{item.price || "N/A"}</td>
                     <td className="px-4 py-3">
                       <Link
-                        to={`/itemcalculation`}
+                        to={`/itemcalculation`} // Incorrect way to pass state
                         state={{ itemData: item }} // Correct way to pass state
                         className="bg-blue-500 px-4 py-2 rounded-md text-white hover:bg-blue-600 transition"
                       >

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const BoxSchema = new mongoose.Schema({
-  box_name: { type: String, required: true },  // Box Name
+  box_name: { type: String, required: true, unique: true },  // Box Name (Ensuring uniqueness)
   length: { type: Number, required: true },  // in inches
   breadth: { type: Number, required: true },  // in inches
   height: { type: Number, required: true },  // in inches
@@ -9,8 +9,7 @@ const BoxSchema = new mongoose.Schema({
   quantity: { type: Number, required: true },  // Quantity of boxes
 });
 
+// Ensure box_name is unique (Corrected the schema name and index syntax)
+BoxSchema.index({ box_name: 1 }, { unique: true });
 
-// Ensure that the box name is unique and prevent adding boxes with the same name
-boxSchema.index({ boxName: 1 }, { unique: true });
-
-module.exports = mongoose.model("BoxData", boxSchema);
+module.exports = mongoose.model("BoxData", BoxSchema);

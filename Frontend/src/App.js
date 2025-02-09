@@ -10,6 +10,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ItemCalculation from "./calculation/ItemCalculation";
 import ActivateAccount from "./pages/ActivateAccount";
+import Map from "./pages/Map";
 
 const Layout = ({ withFooter = true, token, setToken }) => (
   <div className="flex flex-col min-h-screen">
@@ -50,6 +51,7 @@ function App() {
         { path: "itemcalculation", element: <ItemCalculation /> },
       ],
     },
+    { path: "/map", element: <Map /> },
     {
       path: "/dashboard/:id",
       element: token ? <Dashboard /> : <Login setToken={setToken} />, // Restrict access if not logged in
@@ -59,7 +61,10 @@ function App() {
       element: <Layout withFooter={false} token={token} setToken={setToken} />,
       children: [
         { path: "login", element: <Login setToken={setToken} /> },
-        { path: "activate/:token", element: <ActivateAccount setToken={setToken} /> },
+        {
+          path: "activate/:token",
+          element: <ActivateAccount setToken={setToken} />,
+        },
         { path: "signup", element: <SignUp /> },
       ],
     },
