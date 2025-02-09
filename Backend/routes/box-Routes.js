@@ -5,7 +5,12 @@ const BoxData = require("../models/BoxSchema");
 // Add a New Box
 router.post("/addbox", async (req, res) => {
   try {
-    const { boxName, dimensions, quantity, unit } = req.body;
+    const { boxName, length, breadth, height, quantity, max_weight } = req.body;
+
+    // Validation check
+    if (!boxName || !length || !breadth || !height || !quantity || !max_weight) {
+      return res.status(400).json({ error: "All fields are required." });
+    }
 
     // Check if the box already exists
     const existingBox = await BoxData.findOne({ boxName });
@@ -16,9 +21,11 @@ router.post("/addbox", async (req, res) => {
     // Create a new box entry
     const newBox = new BoxData({
       boxName,
-      dimensions,
+      length,
+      breadth,
+      height,
       quantity,
-      unit,
+      max_weight,
     });
 
     // Save the new box data
@@ -34,6 +41,11 @@ router.post("/addbox", async (req, res) => {
 router.post("/updateboxquantity", async (req, res) => {
   try {
     const { boxName, additionalQuantity } = req.body;
+
+    // Validation check
+    if (!boxName || !additionalQuantity || isNaN(additionalQuantity)) {
+      return res.status(400).json({ error: "Box name and additional quantity are required." });
+    }
 
     // Find the box by name
     const box = await BoxData.findOne({ boxName });

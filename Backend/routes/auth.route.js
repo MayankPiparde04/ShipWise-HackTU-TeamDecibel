@@ -23,3 +23,4 @@ router.post('/login',
 
 router.post('/activation', activationController)
 module.exports = router
+

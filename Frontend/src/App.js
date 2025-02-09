@@ -8,6 +8,7 @@ import SignUp from "./auth/Signup";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import ItemCalculation from "./calculation/ItemCalculation";
 import ActivateAccount from "./pages/ActivateAccount";
 
 const Layout = ({ withFooter = true, token, setToken }) => (
@@ -46,6 +47,7 @@ function App() {
       children: [
         { index: true, element: <Home /> },
         { path: "about", element: <About /> },
+        { path: "itemcalculation", element: <ItemCalculation /> },
       ],
     },
     {

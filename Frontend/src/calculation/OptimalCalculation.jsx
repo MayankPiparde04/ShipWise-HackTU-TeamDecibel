@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 
 const App = () => {
@@ -11,9 +11,6 @@ const App = () => {
   });
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
-  const [items, setItems] = useState([]);
-  const [boxes, setBoxes] = useState([]);
-  const [activeTab, setActiveTab] = useState("tab1");
 
   // Static carton data
   const cartons = [
@@ -24,29 +21,6 @@ const App = () => {
     { length: 60, breadth: 60, height: 60, max_weight: 400, quantity: 107 },
     { length: 120, breadth: 60, height: 60, max_weight: 500, quantity: 120 },
   ];
-
-  useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5000/api/getitemdata"
-        ); // Update API URL if needed
-        setItems(response.data);
-      } catch (err) {
-        setError("Failed to fetch items");
-      }
-    };
-    const fetchBoxes = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/getboxes");
-        setBoxes(response.data);
-      } catch (err) {
-        console.error("Error fetching boxes:", err.message);
-      }
-    };
-    fetchItems();
-    fetchBoxes();
-  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -84,7 +58,7 @@ const App = () => {
       setError(err.response ? err.response.data.msg : "Error occurred");
     }
   };
-
+console.log(results)
   // Convert orientation number to string
   const getOrientation = (orientation) => {
     switch (orientation) {
@@ -120,162 +94,84 @@ const App = () => {
           results ? "flex flex-row space-x-6" : ""
         }`}
       >
-        {/* Input Card */}
-        <button
-          onClick={() => setActiveTab("tab1")}
-          className={`w-1/2 py-3 text-center font-medium sm:text-lg ${
-            activeTab === "tab1"
-              ? "bg-gray-800 text-white border-b-2 border-cyan-500"
-              : "bg-gray-700 text-gray-400"
-          }`}
-        >
-          Box
-        </button>
-        <button
-          onClick={() => setActiveTab("tab2")}
-          className={`w-1/2 py-3 text-center font-medium sm:text-lg ${
-            activeTab === "tab2"
-              ? "bg-gray-800 text-white border-b-2 border-cyan-500"
-              : "bg-gray-700 text-gray-400"
-          }`}
-        >
-          items
-        </button>
-        {activeTab === "tab1" && (
-          <div>
-            <div
-              className={`w-full ${
-                results ? "w-1/3" : "w-full"
-              } bg-gray-800 p-6 rounded-lg shadow-lg transition-all ease-in-out duration-300`}
-            >
-              <h1 className="text-2xl font-bold mb-4 text-center text-blue-400">
-                Optimal Packing
-              </h1>
+        <div>
+          <div
+            className={`w-full ${
+              results ? "w-1/3" : "w-full"
+            } bg-gray-800 p-6 rounded-lg shadow-lg transition-all ease-in-out duration-300`}
+          >
+            <h1 className="text-2xl font-bold mb-4 text-center text-blue-400">
+              Optimal Packing
+            </h1>
 
-              {/* Product Input Form */}
-              <div className="space-y-4">
-                {Object.keys(productData).map((field) => (
-                  <div key={field}>
-                    <label className="block font-medium text-gray-300 mb-1 capitalize">
-                      {field}
-                    </label>
-                    <input
-                      type="number"
-                      name={field}
-                      value={productData[field]}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      placeholder={`Enter ${field}`}
-                    />
-                  </div>
-                ))}
-              </div>
-
-              <button
-                onClick={handleSubmit}
-                className="w-full mt-6 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
-              >
-                Calculate
-              </button>
-
-              {error && (
-                <p className="mt-4 text-red-500 font-medium">Error: {error}</p>
-              )}
-            </div>
-            <div>
-              {results && (
-                <div className="w-2/3 flex flex-wrap gap-4">
-                  <h2 className="text-xl font-bold text-blue-400 mb-4 w-full">
-                    Results:
-                  </h2>
-                  <div className="grid grid-cols-2 gap-2">
-                    {results.packing_results.map((result, index) => (
-                      <div
-                        key={index}
-                        className="w-full bg-gray-700 p-4 rounded-md text-gray-100 shadow-lg hover:shadow-2xl transition duration-300"
-                      >
-                        <h3 className="text-lg font-semibold text-blue-300 mb-2">
-                          Carton {result.carton_index} (
-                          {getCartonSize(result.carton_index)})
-                        </h3>
-
-                        <p>Total Cartons Used: {result.cartons_used}</p>
-                        <p>Fit Breadthwise: {result.fit_breadthwise}</p>
-                        <p>Fit Heightwise: {result.fit_heightwise}</p>
-                        <p>Fit Lengthwise: {result.fit_lengthwise}</p>
-                        <p>Orientation: {getOrientation(result.orientation)}</p>
-                        <p>Total Items: {result.total_items}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-4 w-full">
-                    <p className="font-medium text-green-400">
-                      Remaining Quantity: {results.remaining_quantity}
-                    </p>
-                    <p className="font-medium text-green-400">
-                      Success: {results.success ? "Yes" : "No"}
-                    </p>
-                  </div>
+            {/* Product Input Form */}
+            <div className="space-y-4">
+              {Object.keys(productData).map((field) => (
+                <div key={field}>
+                  <label className="block font-medium text-gray-300 mb-1 capitalize">
+                    {field}
+                  </label>
+                  <input
+                    type="number"
+                    name={field}
+                    value={productData[field]}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    placeholder={`Enter ${field}`}
+                  />
                 </div>
-              )}
+              ))}
             </div>
-          </div>
-        )}
-        {activeTab === "tab2" && (
-          <div>
-            <div
-              className={`w-full ${
-                results ? "w-1/3" : "w-full"
-              } bg-gray-800 p-6 rounded-lg shadow-lg transition-all ease-in-out duration-300`}
+
+            <button
+              onClick={handleSubmit}
+              className="w-full mt-6 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
             >
-              <h1 className="text-2xl font-bold mb-4 text-center text-blue-400">
-                Items Data
-              </h1>
-              <table className="w-full text-gray-100 border-collapse border-b border-gray-800">
-                <thead>
-                  <tr>
-                    <th className="px-4 py-2">Item Name</th>
-                    <th className="px-4 py-2">Shape</th>
-                    <th className="px-4 py-2">Weight</th>
-                    <th className="px-4 py-2">Quantity</th>
-                    <th className="px-4 py-2">Price</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map((item) => (
-                    <tr key={item._id}>
-                      <td className="px-4 py-2">{item.productName}</td>
-                      <td className="px-4 py-2">{item.shape}</td>
-                      <td className="px-4 py-2">{item.weight}</td>
-                      <td className="px-4 py-2">{item.quantity}</td>
-                      <td className="px-4 py-2">{item.price}</td>
-                    </tr>
+              Calculate
+            </button>
+
+            {error && (
+              <p className="mt-4 text-red-500 font-medium">Error: {error}</p>
+            )}
+          </div>
+          <div>
+            {results && (
+              <div className="w-2/3 flex flex-wrap gap-4">
+                <h2 className="text-xl font-bold text-blue-400 mb-4 w-full">
+                  Results:
+                </h2>
+                <div className="grid grid-cols-2 gap-2">
+                  {results.packing_results.map((result, index) => (
+                    <div
+                      key={index}
+                      className="w-full bg-gray-700 p-4 rounded-md text-gray-100 shadow-lg hover:shadow-2xl transition duration-300"
+                    >
+                      <h3 className="text-lg font-semibold text-blue-300 mb-2">
+                        Carton {result.carton_index} (
+                        {getCartonSize(result.carton_index)})
+                      </h3>
+
+                      <p>Total Cartons Used: {result.cartons_used}</p>
+                      <p>Fit Breadthwise: {result.fit_breadthwise}</p>
+                      <p>Fit Heightwise: {result.fit_heightwise}</p>
+                      <p>Fit Lengthwise: {result.fit_lengthwise}</p>
+                      <p>Orientation: {getOrientation(result.orientation)}</p>
+                      <p>Total Items: {result.total_items}</p>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold mb-4 text-center text-blue-400">
-                Box Data
-              </h1>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="w-full bg-gray-700 p-4 rounded-md text-gray-100 shadow-lg hover:shadow-2xl transition duration-300">
-                  {boxes.map(function (box, index) {
-                    return (
-                      <div key={index}>
-                        <h3 className="text-lg font-semibold text-blue-300 mb-2">
-                          Carton {index} ({getCartonSize(index)})
-                        </h3>
-                        <p>Max Weight: {box.max_weight}</p>
-                        <p>Quantity: {box.quantity}</p>
-                      </div>
-                    );
-                  })}
+                </div>
+                <div className="mt-4 w-full">
+                  <p className="font-medium text-green-400">
+                    Remaining Quantity: {results.remaining_quantity}
+                  </p>
+                  <p className="font-medium text-green-400">
+                    Success: {results.success ? "Yes" : "No"}
+                  </p>
                 </div>
               </div>
-            </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

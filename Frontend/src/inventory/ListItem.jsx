@@ -1,42 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-
-// Debounce function to delay search input processing
-const useDebounce = (value, delay) => {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-};
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
 const ListItem = () => {
-  // States for data, search term, and loading/error handling
   const [items, setItems] = useState([]);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Debounced search term
-  const debouncedSearchText = useDebounce(searchText, 500);
-
-  // Fetch items from the API
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/getitemdata'); // Update API URL if needed
+        const response = await axios.get("http://localhost:5000/api/getitemdata");
         setItems(response.data);
-        setLoading(false);
       } catch (err) {
-        setError('Failed to fetch items');
+        setError("Failed to fetch items");
+      } finally {
         setLoading(false);
       }
     };
@@ -44,72 +23,66 @@ const ListItem = () => {
     fetchItems();
   }, []);
 
-  // Filter items based on the debounced search text
-  const filteredItems = items.filter(item => {
-    const productName = (item.productName || '').toLowerCase();
-    const shape = (item.shape || '').toLowerCase();
-    const weight = (item.weight || '').toString().toLowerCase();
-    const quantity = (item.quantity || '').toString().toLowerCase();
-    const price = (item.price || '').toString().toLowerCase();
-
-    return (
-      productName.includes(debouncedSearchText.toLowerCase()) ||
-      shape.includes(debouncedSearchText.toLowerCase()) ||
-      weight.includes(debouncedSearchText.toLowerCase()) ||
-      quantity.includes(debouncedSearchText.toLowerCase()) ||
-      price.includes(debouncedSearchText.toLowerCase())
-    );
-  });
+  const filteredItems = items.filter((item) =>
+    item.productName?.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-200 p-4 sm:p-8 flex-col gap-4 justify-center">
-      <h1 className="text-3xl font-bold text-center text-cyan-400 mb-8">Items Inventory</h1>
+    <div className="min-h-screen bg-gray-900 text-gray-200 p-6 flex flex-col items-center">
+      <h1 className="text-3xl font-bold text-cyan-400 mb-6">Items Inventory</h1>
 
-      {/* Search Bar */}
-      <div className="flex justify-center mb-6">
-        <input
-          type="text"
-          placeholder="Search items..."
-          className="w-full max-w-md p-3 rounded-md bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-        />
-      </div>
+      <input
+        type="text"
+        placeholder="Search items..."
+        className="w-full max-w-md p-3 mb-6 rounded-md bg-gray-800 text-gray-200 border border-gray-700 focus:ring-2 focus:ring-cyan-500 outline-none"
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
+      />
 
-      {/* Loading and Error States */}
-      {loading && <p className="text-center text-gray-400">Loading items...</p>}
-      {error && <p className="text-center text-red-500">{error}</p>}
+      {loading && <p className="text-gray-400">Loading items...</p>}
+      {error && <p className="text-red-500">{error}</p>}
 
-      {/* Items Table */}
       {!loading && !error && (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse bg-gray-800 rounded-md overflow-hidden">
-            <thead>
-              <tr className="bg-gray-700 text-gray-300">
+        <div className="overflow-x-auto w-full max-w-4xl">
+          <table className="w-full text-left border-collapse bg-gray-800 rounded-md">
+            <thead className="bg-gray-700 text-gray-300">
+              <tr>
                 <th className="px-4 py-3">Item Name</th>
                 <th className="px-4 py-3">Shape</th>
                 <th className="px-4 py-3">Weight</th>
                 <th className="px-4 py-3">Quantity</th>
                 <th className="px-4 py-3">Price</th>
+                <th className="px-4 py-3">Action</th>
               </tr>
             </thead>
             <tbody>
-              {filteredItems.map((item, index) => (
-                <tr
-                  key={item._id || index}
-                  className={`${index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700'
-                    } hover:bg-gray-600 transition-colors duration-200`}
-                >
-                  <td className="px-4 py-3">{item.productName}</td>
-                  <td className="px-4 py-3">{item.shape || 'N/A'}</td>
-                  <td className="px-4 py-3">{item.weight || 'N/A'}</td>
-                  <td className="px-4 py-3">{item.quantity}</td>
-                  <td className="px-4 py-3">{item.price || 'N/A'}</td>
-                </tr>
-              ))}
-              {filteredItems.length === 0 && (
+              {filteredItems.length > 0 ? (
+                filteredItems.map((item, index) => (
+                  <tr
+                    key={item._id || index}
+                    className={`${
+                      index % 2 === 0 ? "bg-gray-800" : "bg-gray-700"
+                    } hover:bg-gray-600 transition-colors`}
+                  >
+                    <td className="px-4 py-3">{item.productName || "N/A"}</td>
+                    <td className="px-4 py-3">{item.shape || "N/A"}</td>
+                    <td className="px-4 py-3">{item.weight || "N/A"}</td>
+                    <td className="px-4 py-3">{item.quantity || "N/A"}</td>
+                    <td className="px-4 py-3">{item.price || "N/A"}</td>
+                    <td className="px-4 py-3">
+                      <Link
+                        to={`/itemcalculation`}
+                        state={{ itemData: item }} // Correct way to pass state
+                        className="bg-blue-500 px-4 py-2 rounded-md text-white hover:bg-blue-600 transition"
+                      >
+                        Open Calculation
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              ) : (
                 <tr>
-                  <td colSpan="5" className="px-4 py-3 text-center text-gray-400">
+                  <td colSpan="6" className="px-4 py-3 text-center text-gray-400">
                     No items found
                   </td>
                 </tr>

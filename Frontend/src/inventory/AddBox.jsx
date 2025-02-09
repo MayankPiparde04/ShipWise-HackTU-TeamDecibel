@@ -5,15 +5,15 @@ const AddBox = () => {
   const [activeTab, setActiveTab] = useState("tab1");
   const [formData, setFormData] = useState({
     boxName: "",
-    dimensions: { length: "", breadth: "", height: "" },
+    length: "",
+    breadth: "",
+    height: "",
     quantity: "",
-    unit: "",
+    max_weight: "",
   });
   const [existingBoxes, setExistingBoxes] = useState([]);
   const [selectedBox, setSelectedBox] = useState("");
   const [additionalQuantity, setAdditionalQuantity] = useState("");
-
-  const unitOptions = ["inch", "centimeter", "feet"];
 
   // Fetch Existing Boxes
   const fetchBoxes = async () => {
@@ -37,19 +37,12 @@ const AddBox = () => {
     }));
   };
 
-  const handleDimensionChange = (key, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      dimensions: { ...prev.dimensions, [key]: value },
-    }));
-  };
-
   // Submit New Box
   const handleNewBoxSubmit = async (e) => {
     e.preventDefault();
-    const { boxName, dimensions, quantity, unit } = formData;
+    const { boxName, length, breadth, height, quantity, max_weight } = formData;
 
-    if (!boxName || !quantity || !unit || !dimensions.length || !dimensions.breadth || !dimensions.height) {
+    if (!boxName || !length || !breadth || !height || !quantity || !max_weight) {
       alert("Please fill in all required fields.");
       return;
     }
@@ -60,9 +53,11 @@ const AddBox = () => {
       fetchBoxes();
       setFormData({
         boxName: "",
-        dimensions: { length: "", breadth: "", height: "" },
+        length: "",
+        breadth: "",
+        height: "",
         quantity: "",
-        unit: "",
+        max_weight: "",
       });
     } catch (err) {
       console.error("Error adding box:", err.message);
@@ -118,18 +113,11 @@ const AddBox = () => {
           <form onSubmit={handleNewBoxSubmit}>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <Field label="Box Name" value={formData.boxName} onChange={(val) => handleInputChange("boxName", val)} placeholder="Enter box name" />
-              {["length", "breadth", "height"].map((dim) => (
-                <Field
-                  key={dim}
-                  label={dim.charAt(0).toUpperCase() + dim.slice(1)}
-                  type="number"
-                  value={formData.dimensions[dim]}
-                  onChange={(val) => handleDimensionChange(dim, val)}
-                  placeholder={`Enter ${dim}`}
-                />
-              ))}
+              <Field label="Length" type="number" value={formData.length} onChange={(val) => handleInputChange("length", val)} placeholder="Enter length" />
+              <Field label="Breadth" type="number" value={formData.breadth} onChange={(val) => handleInputChange("breadth", val)} placeholder="Enter breadth" />
+              <Field label="Height" type="number" value={formData.height} onChange={(val) => handleInputChange("height", val)} placeholder="Enter height" />
               <Field label="Quantity" type="number" value={formData.quantity} onChange={(val) => handleInputChange("quantity", val)} placeholder="Enter quantity" />
-              <Field label="Unit of Measurement" value={formData.unit} onChange={(val) => handleInputChange("unit", val)} options={unitOptions} placeholder="Select a unit" />
+              <Field label="Max Weight" type="number" value={formData.max_weight} onChange={(val) => handleInputChange("max_weight", val)} placeholder="Enter max weight" />
             </div>
             <button type="submit" className="mt-4 w-full sm:w-auto bg-cyan-600 hover:bg-cyan-700 text-white font-medium rounded-lg px-5 py-2.5">
               Add Box
